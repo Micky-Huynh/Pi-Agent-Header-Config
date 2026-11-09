@@ -1,5 +1,5 @@
 /**
- * Custom Header Extension
+ * Sticky Π Header Art Extension
  *
  * Shows a large block-character Π in a sticky widget above the editor
  * (not the scrollable startup header), then streams digits of π in the
@@ -12,8 +12,8 @@
  * cannot yank it away.
  *
  * Commands:
- *   /custom-header   — re-apply the sticky Π art (restarts the digit stream)
- *   /builtin-header  — dismiss the art and restore pi's built-in header
+ *   /pi-header      — re-apply the sticky Π art (restarts the digit stream)
+ *   /pi-header-off  — clear/dismiss the sticky Π widget
  */
 
 import type {
@@ -433,22 +433,21 @@ export default function (pi: ExtensionAPI) {
 		scheduleDismiss(ctx);
 	});
 
-	pi.registerCommand("custom-header", {
-		description:
-			"Show the sticky Π art above the editor (restarts π digit stream)",
+	pi.registerCommand("pi-header", {
+		description: "Re-apply sticky Π art / restart digit stream",
 		handler: async (_args, ctx) => {
 			applyCustomArt(ctx);
-			if (ctx.hasUI) ctx.ui.notify("Custom Π art applied (sticky)", "info");
+			if (ctx.hasUI) ctx.ui.notify("Π header art applied (sticky)", "info");
 		},
 	});
 
-	pi.registerCommand("builtin-header", {
-		description: "Dismiss the sticky Π art and restore the built-in header",
+	pi.registerCommand("pi-header-off", {
+		description: "Clear/dismiss the sticky Π widget",
 		handler: async (_args, ctx) => {
 			if (ctx.mode !== "tui") return;
 			dismissArt(ctx);
 			ctx.ui.setHeader(undefined);
-			if (ctx.hasUI) ctx.ui.notify("Built-in header restored", "info");
+			if (ctx.hasUI) ctx.ui.notify("Sticky Π widget cleared", "info");
 		},
 	});
 }

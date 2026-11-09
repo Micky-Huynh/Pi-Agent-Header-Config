@@ -1,0 +1,15 @@
+{
+  "name": "pi-agent-header-config",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Sticky Π artwork header extension for the pi coding agent TUI",
+  "type": "module",
+  "keywords": ["pi-package", "pi-extension", "tui"],
+  "license": "MIT",
+  "pi": {
+    "extensions": ["./extensions/pi-header-art.ts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  }
+}
