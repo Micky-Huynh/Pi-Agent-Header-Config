@@ -15,8 +15,8 @@ cp custom-header.ts ~/.pi/agent/extensions/custom-header.ts
 Or clone and copy:
 
 ```bash
-git clone https://github.com/Micky-Huynh/pi-agent-header-config.git
-cp pi-agent-header-config/custom-header.ts ~/.pi/agent/extensions/custom-header.ts
+git clone https://github.com/Micky-Huynh/Pi-Agent-Header-Config.git
+cp Pi-Agent-Header-Config/custom-header.ts ~/.pi/agent/extensions/custom-header.ts
 ```
 
 Then in an active pi session:
