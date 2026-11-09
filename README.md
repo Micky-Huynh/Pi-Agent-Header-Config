@@ -8,6 +8,9 @@ Shows a large block-character **Π**, then streams digits of π (Rabinowitz–Wa
 
 ### Primary (recommended)
 
+If a legacy flat `~/.pi/agent/extensions/custom-header.ts` is present, remove it
+first so the package does not double-load with the old file.
+
 ```bash
 pi install git:github.com/Micky-Huynh/Pi-Agent-Header-Config
 ```
@@ -18,11 +21,12 @@ Then in an active pi session:
 /reload
 ```
 
-Or restart pi.
+Or restart pi. Commands: `/pi-header` (was `/custom-header`), `/pi-header-off` (was `/builtin-header`).
 
 ### Secondary (manual copy)
 
-From a local checkout of this repo:
+Remove any legacy flat `~/.pi/agent/extensions/custom-header.ts` first so you
+do not double-load both files. Then from a local checkout of this repo:
 
 ```bash
 cp extensions/pi-header-art.ts ~/.pi/agent/extensions/pi-header-art.ts
