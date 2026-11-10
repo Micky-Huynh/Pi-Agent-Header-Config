@@ -1,5 +1,7 @@
 # Pi Agent Header Config
 
+[![ci](https://github.com/Micky-Huynh/Pi-Agent-Header-Config/actions/workflows/ci.yml/badge.svg)](https://github.com/Micky-Huynh/Pi-Agent-Header-Config/actions/workflows/ci.yml)
+
 Sticky **Π** artwork plus an unbounded **π** digit stream for the [pi](https://github.com/badlogic/pi-mono) coding agent TUI.
 
 Shows a large block-character **Π**, then streams digits of π (Rabinowitz–Wagon BigInt spigot) until you type. The band scrolls left as new digits appear. The art dismisses after the first submitted message.

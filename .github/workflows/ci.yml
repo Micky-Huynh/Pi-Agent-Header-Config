@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  package-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Assert pi package contract
+        run: |
+          node -e '
+            const fs = require("fs");
+            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+            const ex = pkg.pi && pkg.pi.extensions;
+            if (!Array.isArray(ex) || !ex.includes("./extensions/pi-header-art.ts")) {
+              throw new Error("pi.extensions must include ./extensions/pi-header-art.ts");
+            }
+            for (const p of ex) {
+              if (!fs.existsSync(p)) throw new Error("missing " + p);
+            }
+            const src = fs.readFileSync("./extensions/pi-header-art.ts", "utf8");
+            if (!src.includes("setWidget")) {
+              throw new Error("extension must use setWidget (sticky), not only setHeader");
+            }
+            if (!src.includes("/pi-header") || !src.includes("/pi-header-off")) {
+              throw new Error("extension must register /pi-header and /pi-header-off");
+            }
+            console.log("OK pi package contract");
+          '
