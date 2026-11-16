@@ -15,9 +15,9 @@ if (!frame.includes("Archimedes")) {
 	console.error("snapshot missing Archimedes HUD");
 	process.exit(1);
 }
-// Side count is centered as "5" / "sides" on separate rows (graphic style).
-if (!/\b5\b/.test(frame) || !frame.includes("sides")) {
-	console.error("snapshot at t=0 should show pentagon (5 / sides), got:\n", frame);
+// Side count is centered as "3" / "sides" on separate rows (graphic style).
+if (!/\b3\b/.test(frame) || !frame.includes("sides")) {
+	console.error("snapshot at t=0 should show triangle (3 / sides), got:\n", frame);
 	process.exit(1);
 }
 if (!frame.includes("<  π  <")) {

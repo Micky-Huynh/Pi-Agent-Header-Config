@@ -1,3 +1,6 @@
+## [1.1.5] - 2026-11-16
+- **archimedes:** start from triangle — cycle **3 → 20 → 3** (was 5→20→5)
+
 ## [1.1.4] - 2026-11-16
 - **archimedes:** slightly faster step hold (~0.5s; was 0.75s)
 
