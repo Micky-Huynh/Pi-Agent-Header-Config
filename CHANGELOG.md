@@ -1,3 +1,6 @@
+## [1.1.7] - 2026-11-16
+- **archimedes:** inner n-gon starts inside the circle; outer trap is always **n+1** sides (triangle → square at start)
+
 ## [1.1.6] - 2026-11-16
 - **archimedes:** keep circle large when starting at triangle (don't shrink to fit outer n=3)
 

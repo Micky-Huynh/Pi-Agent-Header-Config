@@ -2,8 +2,8 @@
  * Archimedes' polygons sticky flavor — wraps pure scene + theme paint.
  * Scene math: extensions/lib/archimedes-scene.ts (from Desktop/polygon_pi.py).
  *
- * Default: purple circle trapped between blue-dotted inner+outer n-gons
- * stepping 3 → 20 → 3 until typing (“Archimedes trapped π”).
+ * Default: purple circle trapped by blue-dotted polygons — inner n inside,
+ * outer n+1 outside — stepping 3 → 20 → 3 until typing (“Archimedes trapped π”).
  */
 
 import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";

@@ -15,9 +15,9 @@ if (!frame.includes("Archimedes")) {
 	console.error("snapshot missing Archimedes HUD");
 	process.exit(1);
 }
-// Side count is centered as "3" / "sides" on separate rows (graphic style).
-if (!/\b3\b/.test(frame) || !frame.includes("sides")) {
-	console.error("snapshot at t=0 should show triangle (3 / sides), got:\n", frame);
+// Side count: inner/outer ("3/4") + "sides" under it (triangle inside, square outside).
+if (!frame.includes("3/4") || !frame.includes("sides")) {
+	console.error("snapshot at t=0 should show 3/4 sides (inner △ / outer □), got:\n", frame);
 	process.exit(1);
 }
 if (!frame.includes("<  π  <")) {

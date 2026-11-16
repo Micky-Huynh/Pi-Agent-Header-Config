@@ -1,8 +1,9 @@
 /**
  * Pure Archimedes polygon scene (no pi imports) — shared by flavor + CI snapshot.
  *
- * Default look: purple circle trapped between blue-dotted inner+outer n-gons
- * stepping 3 → 20 → 3 (until input) — “Archimedes trapped π”.
+ * Default look: purple circle trapped between blue-dotted polygons —
+ * inner n-gon inscribed (starts as triangle inside the circle),
+ * outer (n+1)-gon circumscribed — stepping 3 → 20 → 3 until input.
  */
 
 import { BrailleCanvas, type CellColor } from "./braille-canvas.ts";
@@ -117,13 +118,11 @@ export function sceneAt(
 }
 
 /**
- * Keep the purple circle large (~band-filling). Outer n-gons for small n
- * (esp. triangle) extend past the circle by 1/cos(π/n); do **not** shrink the
- * circle to fit N_MIN=3 (that reversed circle vs triangle size). Use a fixed
- * pentagon-scale margin so the circle stays dominant; extreme outer vertices
- * may clip the art band briefly at n=3.
+ * Keep the purple circle large (~band-filling). Outer trap is always n+1 sides
+ * (min 4 when inner is a triangle), so size the circle for a square outer —
+ * not for an outer triangle (that shrank the circle under a huge triangle).
  */
-const CIRCLE_FIT_SIDES = 5;
+const CIRCLE_FIT_OUTER_SIDES = N_MIN + 1; // 4 when N_MIN=3
 
 function circleRadius(
 	cv: BrailleCanvas,
@@ -133,7 +132,7 @@ function circleRadius(
 	const h = drawRows * 4;
 	const half = Math.min(cv.width / 2, h / 2);
 	if (outer) {
-		const sec = 1 / Math.cos(Math.PI / CIRCLE_FIT_SIDES);
+		const sec = 1 / Math.cos(Math.PI / CIRCLE_FIT_OUTER_SIDES);
 		return (half * 0.96) / sec;
 	}
 	return half * 0.98;
@@ -156,11 +155,15 @@ export function paintScene(
 	let outer: Array<[number, number]>;
 	let vi: number;
 	let vo: number;
+	let nOuter = n;
 	if (state.mode === "step") {
+		// Inner n-gon inscribed (vertices on circle → body inside).
+		// Outer trap is always one side bigger and circumscribed outside.
+		nOuter = n + 1;
 		inner = regular(n);
-		outer = regular(n, 1 / Math.cos(Math.PI / n));
+		outer = regular(nOuter, 1 / Math.cos(Math.PI / nOuter));
 		vi = pIn(n);
-		vo = pOut(n);
+		vo = pOut(nOuter);
 	} else {
 		inner = innerShape(n, u);
 		outer = outerShape(n, u);
@@ -175,9 +178,11 @@ export function paintScene(
 	if (state.showCircle) cv.circle(cx, cy, R, COLOR.circle, 2);
 	cv.polygon(toScreen(inner), COLOR.inner, POLYGON_DOT_STRIDE, true);
 
-	// Side count centered on the circle (number on geometric mid-row, "sides" under it).
+	// Side count: inner / outer when trapping (outer is always n+1 in step mode).
 	const centerRow = Math.floor(cy / 4);
-	cv.putTextCenter(centerRow, `${label}`, COLOR.hud);
+	const sideLabel =
+		state.mode === "step" && state.outer ? `${label}/${nOuter}` : `${label}`;
+	cv.putTextCenter(centerRow, sideLabel, COLOR.hud);
 	cv.putTextCenter(centerRow + 1, "sides", COLOR.hudDim);
 
 	cv.putTextCenter(drawRows, "Archimedes trapped π", COLOR.hud);
