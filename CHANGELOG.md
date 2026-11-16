@@ -1,3 +1,6 @@
+## [1.1.4] - 2026-11-16
+- **archimedes:** slightly faster step hold (~0.5s; was 0.75s)
+
 ## [1.1.3] - 2026-11-16
 - **archimedes:** slower step hold (~0.75s); cycle **5 → 20 → 5** (was 5→48→5)
 

@@ -16,8 +16,8 @@ export const MORPH_S = 1.6;
 /** Inclusive side-count range for step mode (pentagon → end → back). */
 export const N_MIN = 5;
 export const N_MAX = 20;
-/** Seconds spent on each side count before advancing (slower for readability). */
-export const STEP_HOLD_S = 0.75;
+/** Seconds spent on each side count before advancing. */
+export const STEP_HOLD_S = 0.5;
 /** Braille-dot stride along polygon edges (higher = sparser blue dots). */
 export const POLYGON_DOT_STRIDE = 2;
 
