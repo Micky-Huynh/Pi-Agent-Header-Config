@@ -2,9 +2,16 @@
 
 [![ci](https://github.com/Micky-Huynh/Pi-Agent-Header-Config/actions/workflows/ci.yml/badge.svg)](https://github.com/Micky-Huynh/Pi-Agent-Header-Config/actions/workflows/ci.yml)
 
-Sticky **Π** artwork plus an unbounded **π** digit stream for the [pi](https://github.com/badlogic/pi-mono) coding agent TUI.
+Sticky **TUI artwork** for the [pi](https://github.com/badlogic/pi-mono) coding agent — multi-flavor, sticky via `setWidget`.
 
-Shows a large block-character **Π**, then streams digits of π (Rabinowitz–Wagon BigInt spigot) until you type. The band scrolls left as new digits appear. The art dismisses after the first submitted message.
+## Flavors
+
+| Id | Look |
+|----|------|
+| `classic` | Large block **Π**, then unbounded π digits (Rabinowitz–Wagon spigot) scrolling left |
+| `archimedes` | Circle approximated by inscribed/circumscribed polygons morphing **6 → 12 → 24 → 48** (braille canvas) |
+
+Last chosen flavor is saved to `~/.pi/agent/pi-header-art.json` so it survives `/reload` and new sessions. Default is `classic` until you switch.
 
 ## Install
 
@@ -23,25 +30,28 @@ Then in an active pi session:
 /reload
 ```
 
-Or restart pi. Commands: `/pi-header` (was `/custom-header`), `/pi-header-off` (was `/builtin-header`).
+Or restart pi.
 
 ### Secondary (manual copy)
 
-Remove any legacy flat `~/.pi/agent/extensions/custom-header.ts` first so you
-do not double-load both files. Then from a local checkout of this repo:
+Prefer the package install above. For a one-file smoke test only:
 
 ```bash
-cp extensions/pi-header-art.ts ~/.pi/agent/extensions/pi-header-art.ts
+# Not recommended for multi-flavor layout — use pi install so relative imports resolve.
+pi install git:github.com/Micky-Huynh/Pi-Agent-Header-Config
 ```
-
-Then `/reload` or restart pi.
 
 ## Commands
 
 | Command | Action |
 |---------|--------|
-| `/pi-header` | Show / restart the sticky Π art |
+| `/pi-header` | Show / restart the current flavor |
+| `/pi-header classic` | Switch to classic Π stream (persisted) |
+| `/pi-header archimedes` | Switch to Archimedes polygons (persisted) |
+| `/pi-header list` | List flavors (`*` = current) |
 | `/pi-header-off` | Clear the sticky widget |
+
+Art dismisses after the first submitted message (honors a short minimum display time). Typing pauses classic digit stream / Archimedes morph; the widget stays until dismiss.
 
 ## Don’t
 
@@ -51,22 +61,30 @@ Then `/reload` or restart pi.
 
 ## How it works
 
-This extension uses sticky **setWidget**, not scrollable **setHeader**. The Π art stays pinned in the TUI while digits stream; it does not ride the chat scroll history the way a header does.
+Sticky **setWidget**, not scrollable **setHeader**. Flavors live under `extensions/flavors/`; the shell (`extensions/pi-header-art.ts`) owns lifecycle, commands, and prefs. Shared braille canvas: `extensions/lib/braille-canvas.ts` (reuse for new scenes).
+
+### Adding a flavor
+
+1. Create `extensions/flavors/<name>.ts` implementing `ArtFlavor` (`mount` returns a widget).
+2. Register it in `extensions/flavors/index.ts`.
+3. Document the id in this README + CHANGELOG.
 
 ## What’s included
 
-| File | Purpose |
+| Path | Purpose |
 |------|---------|
-| `extensions/pi-header-art.ts` | Pi extension: sticky Π + unbounded π digit stream |
-| `package.json` | Package metadata + `pi.extensions` entry for `pi install` |
+| `extensions/pi-header-art.ts` | Commands, sticky lifecycle, flavor prefs |
+| `extensions/flavors/` | `classic`, `archimedes`, registry |
+| `extensions/lib/braille-canvas.ts` | Braille dot canvas for polygon / scene art |
+| `package.json` | `pi.extensions` entry for `pi install` |
 | `LICENSE` | MIT |
 
-No settings, auth, API keys, or personal config are included.
+No settings, auth, API keys, or personal config are included in the package (prefs write only the flavor id under your agent dir).
 
 ## Requirements
 
 - `@earendil-works/pi-coding-agent` (pi) with TUI / interactive mode
-- Extensions enabled (default global folder: `~/.pi/agent/extensions/`)
+- Unicode / braille-capable terminal font for `archimedes`
 
 ## Source
 

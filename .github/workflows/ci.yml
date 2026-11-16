@@ -27,12 +27,29 @@ jobs:
             for (const p of ex) {
               if (!fs.existsSync(p)) throw new Error("missing " + p);
             }
+            const required = [
+              "./extensions/pi-header-art.ts",
+              "./extensions/flavors/index.ts",
+              "./extensions/flavors/classic.ts",
+              "./extensions/flavors/archimedes.ts",
+              "./extensions/lib/braille-canvas.ts",
+              "./extensions/lib/archimedes-scene.ts",
+            ];
+            for (const p of required) {
+              if (!fs.existsSync(p)) throw new Error("missing " + p);
+            }
             const src = fs.readFileSync("./extensions/pi-header-art.ts", "utf8");
             if (!src.includes("setWidget")) {
               throw new Error("extension must use setWidget (sticky), not only setHeader");
             }
-            if (!src.includes("/pi-header") || !src.includes("/pi-header-off")) {
+            if (!src.includes("pi-header") || !src.includes("pi-header-off")) {
               throw new Error("extension must register /pi-header and /pi-header-off");
+            }
+            if (!src.includes("archimedes") || !src.includes("classic")) {
+              throw new Error("extension must reference classic and archimedes flavors");
             }
             console.log("OK pi package contract");
           '
+
+      - name: Archimedes snapshot
+        run: npm run snapshot:archimedes
