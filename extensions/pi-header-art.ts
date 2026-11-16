@@ -3,7 +3,7 @@
  *
  * Flavors (add more under extensions/flavors/):
  *   classic     — block Π + unbounded π digit stream
- *   archimedes  — circle ≈ polygons morphing 6 → 12 → 24 → 48
+ *   archimedes  — purple circle trapped by blue n-gons stepping 5 → 20 → 5
  *
  * Commands:
  *   /pi-header              — re-apply last/current flavor

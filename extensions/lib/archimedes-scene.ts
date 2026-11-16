@@ -2,7 +2,7 @@
  * Pure Archimedes polygon scene (no pi imports) — shared by flavor + CI snapshot.
  *
  * Default look: purple circle trapped between blue-dotted inner+outer n-gons
- * stepping 5 → 48 → 5 (until input) — “Archimedes trapped π”.
+ * stepping 5 → 20 → 5 (until input) — “Archimedes trapped π”.
  */
 
 import { BrailleCanvas, type CellColor } from "./braille-canvas.ts";
@@ -15,9 +15,9 @@ export const MORPH_S = 1.6;
 
 /** Inclusive side-count range for step mode (pentagon → end → back). */
 export const N_MIN = 5;
-export const N_MAX = 48;
-/** Seconds spent on each side count before advancing. */
-export const STEP_HOLD_S = 0.28;
+export const N_MAX = 20;
+/** Seconds spent on each side count before advancing (slower for readability). */
+export const STEP_HOLD_S = 0.75;
 /** Braille-dot stride along polygon edges (higher = sparser blue dots). */
 export const POLYGON_DOT_STRIDE = 2;
 
@@ -89,7 +89,7 @@ function regular(n: number, r = 1.0): Array<[number, number]> {
 }
 
 /**
- * Triangle wave over [N_MIN, N_MAX]: 5,6,…,48,47,…,5,6,… forever.
+ * Triangle wave over [N_MIN, N_MAX]: 5,6,…,20,19,…,5,6,… forever.
  */
 export function sceneAt(
 	state: SceneState,
@@ -171,8 +171,8 @@ export function paintScene(
 	if (state.showCircle) cv.circle(cx, cy, R, COLOR.circle, 2);
 	cv.polygon(toScreen(inner), COLOR.inner, POLYGON_DOT_STRIDE, true);
 
-	// Side count centered in the circle (like the reference graphic).
-	const centerRow = Math.floor(drawRows / 2) - 1;
+	// Side count centered on the circle (number on geometric mid-row, "sides" under it).
+	const centerRow = Math.floor(cy / 4);
 	cv.putTextCenter(centerRow, `${label}`, COLOR.hud);
 	cv.putTextCenter(centerRow + 1, "sides", COLOR.hudDim);
 

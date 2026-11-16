@@ -111,7 +111,9 @@ export class BrailleCanvas {
 	}
 
 	putTextCenter(row: number, s: string, color: CellColor = null): void {
-		this.putText(row, Math.floor((this.cols - s.length) / 2), s, color);
+		// round() (not floor) so short labels sit on the braille/circle center
+		// on even column counts instead of half a cell to the left.
+		this.putText(row, Math.round((this.cols - s.length) / 2), s, color);
 	}
 
 	/**

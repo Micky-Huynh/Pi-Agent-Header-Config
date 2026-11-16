@@ -1,3 +1,6 @@
+## [1.1.3] - 2026-11-16
+- **archimedes:** slower step hold (~0.75s); cycle **5 → 20 → 5** (was 5→48→5)
+
 ## [1.1.2] - 2026-11-16
 - **archimedes:** trap look from reference graphic — purple circle between **blue** inner+outer dotted polygons (vertex dots); HUD `inside < π < outside`
 

@@ -3,7 +3,7 @@
  * Scene math: extensions/lib/archimedes-scene.ts (from Desktop/polygon_pi.py).
  *
  * Default: purple circle trapped between blue-dotted inner+outer n-gons
- * stepping 5 → 48 → 5 until typing (“Archimedes trapped π”).
+ * stepping 5 → 20 → 5 until typing (“Archimedes trapped π”).
  */
 
 import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
