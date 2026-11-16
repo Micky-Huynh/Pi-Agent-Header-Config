@@ -1,3 +1,6 @@
+## [1.1.2] - 2026-11-16
+- **archimedes:** trap look from reference graphic — purple circle between **blue** inner+outer dotted polygons (vertex dots); HUD `inside < π < outside`
+
 ## [1.1.1] - 2026-11-16
 - **archimedes:** blue-dotted approximating polygon; ~2× circle; step **5 → 48 → 5** (loop until typing)
 

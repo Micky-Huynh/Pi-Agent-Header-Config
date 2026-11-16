@@ -2,7 +2,8 @@
  * Archimedes' polygons sticky flavor — wraps pure scene + theme paint.
  * Scene math: extensions/lib/archimedes-scene.ts (from Desktop/polygon_pi.py).
  *
- * Default: blue-dotted n-gon stepping 5 → 48 → 5 around a ~2× circle until typing.
+ * Default: purple circle trapped between blue-dotted inner+outer n-gons
+ * stepping 5 → 48 → 5 until typing (“Archimedes trapped π”).
  */
 
 import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
@@ -22,18 +23,19 @@ import type { ArtFlavor, FlavorTui, FlavorWidget } from "./types.ts";
 
 const FRAME_MS = 67; // ~15 fps
 
-/** Explicit blue for the approximating polygon dots (not a theme token). */
+/** Explicit blue for both trap polygons + vertex dots (not a theme token). */
 const POLYGON_BLUE = { kind: "rgb" as const, r: 64, g: 156, b: 255 };
+/** Explicit purple for the trapped circle. */
+const CIRCLE_PURPLE = { kind: "rgb" as const, r: 168, g: 120, b: 255 };
 
 function paintRole(theme: Theme, ch: string, color: CellColor): string {
 	if (!ch || ch === " ") return ch;
 	switch (color) {
 		case COLOR.circle:
-			return theme.fg("muted", ch);
+			return theme.style(ch, { fg: CIRCLE_PURPLE, bold: true });
 		case COLOR.inner:
-			return theme.style(ch, { fg: POLYGON_BLUE, bold: true });
 		case COLOR.outer:
-			return theme.fg("warning", ch);
+			return theme.style(ch, { fg: POLYGON_BLUE, bold: true });
 		case COLOR.hud:
 			return theme.bold(theme.fg("accent", ch));
 		case COLOR.hudDim:
@@ -51,7 +53,7 @@ function mountArchimedes(
 	const state: SceneState = {
 		t: 0,
 		mode: "step",
-		outer: false,
+		outer: true,
 		showCircle: true,
 		speed: 1,
 		paused: false,
@@ -113,11 +115,11 @@ function mountArchimedes(
 				(stopped
 					? theme.fg(
 							"dim",
-							`  · archimedes · ${cachedLabel} sides · art stays until you send a message`,
+							`  · archimedes · ${cachedLabel} sides · trap stays until you send a message`,
 						)
 					: theme.fg(
 							"dim",
-							`  · archimedes · ${N_MIN}→${N_MAX}→${N_MIN} · type to pause`,
+							`  · archimedes · trap ${N_MIN}→${N_MAX}→${N_MIN} · perimeter ÷ diameter · type to pause`,
 						));
 
 			return [...cachedLines, subtitle];
@@ -137,6 +139,6 @@ export const snapshotArchimedes = snapshotScene;
 export const archimedesFlavor: ArtFlavor = {
 	id: "archimedes",
 	label: "Archimedes polygons",
-	description: `Circle ≈ blue-dotted n-gons stepping ${N_MIN} → ${N_MAX} → ${N_MIN}`,
+	description: `Purple circle trapped by blue-dotted n-gons ${N_MIN} → ${N_MAX} → ${N_MIN}`,
 	mount: mountArchimedes,
 };

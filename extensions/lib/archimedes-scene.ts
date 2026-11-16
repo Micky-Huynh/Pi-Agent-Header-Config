@@ -1,7 +1,8 @@
 /**
  * Pure Archimedes polygon scene (no pi imports) — shared by flavor + CI snapshot.
  *
- * Default look: circle ≈ blue-dotted n-gon stepping 5 → 48 → 5 (until input).
+ * Default look: purple circle trapped between blue-dotted inner+outer n-gons
+ * stepping 5 → 48 → 5 (until input) — “Archimedes trapped π”.
  */
 
 import { BrailleCanvas, type CellColor } from "./braille-canvas.ts";
@@ -115,7 +116,10 @@ export function sceneAt(
 	return { n, u, label: u > 0.5 ? 2 * n : n };
 }
 
-/** ~2× the previous outer-constrained radius; fills most of the art band. */
+/**
+ * Circle radius sized so the outer trap still fits (~2× the original band scale).
+ * Outer circumscribed n-gon reaches r / cos(π/n); leave margin for N_MIN.
+ */
 function circleRadius(
 	cv: BrailleCanvas,
 	drawRows: number,
@@ -124,9 +128,9 @@ function circleRadius(
 	const h = drawRows * 4;
 	const half = Math.min(cv.width / 2, h / 2);
 	if (outer) {
-		// Outer n-gon still needs margin, but keep ~2× old scale.
 		const sec = 1 / Math.cos(Math.PI / N_MIN);
-		return half / (sec * 0.52);
+		// Slightly tighter than half/sec so the trap fills the band like the graphic.
+		return (half * 0.96) / sec;
 	}
 	return half * 0.98;
 }
@@ -160,24 +164,24 @@ export function paintScene(
 		vo = pOut(n) + (pOut(2 * n) - pOut(n)) * u;
 	}
 
+	// Draw order: outer trap → purple circle → inner trap (graphic sandwich).
+	if (state.outer) {
+		cv.polygon(toScreen(outer), COLOR.outer, POLYGON_DOT_STRIDE, true);
+	}
 	if (state.showCircle) cv.circle(cx, cy, R, COLOR.circle, 2);
-	if (state.outer) cv.polygon(toScreen(outer), COLOR.outer);
-	// Approximating polygon as sparse blue dots (painted blue in the flavor).
-	cv.polygon(toScreen(inner), COLOR.inner, POLYGON_DOT_STRIDE);
+	cv.polygon(toScreen(inner), COLOR.inner, POLYGON_DOT_STRIDE, true);
 
-	cv.putTextCenter(
-		drawRows,
-		`Archimedes' polygons  ·  ${label} sides`,
-		COLOR.hud,
-	);
+	// Side count centered in the circle (like the reference graphic).
+	const centerRow = Math.floor(drawRows / 2) - 1;
+	cv.putTextCenter(centerRow, `${label}`, COLOR.hud);
+	cv.putTextCenter(centerRow + 1, "sides", COLOR.hudDim);
+
+	cv.putTextCenter(drawRows, "Archimedes trapped π", COLOR.hud);
 	const stats = state.outer
-		? `inside ${vi.toFixed(4)}  <  π  <  ${vo.toFixed(4)}  outside     gap ${(vo - vi).toFixed(4)}`
-		: `inside perimeter ${vi.toFixed(4)}     π = ${Math.PI.toFixed(4)}…     error ${(Math.PI - vi).toFixed(4)}`;
-	cv.putTextCenter(
-		drawRows + 1,
-		stats,
-		state.outer ? COLOR.hudDim : COLOR.inner,
-	);
+		? `${vi.toFixed(4)}  <  π  <  ${vo.toFixed(4)}`
+		: `inside ${vi.toFixed(4)}     π = ${Math.PI.toFixed(4)}…`;
+	cv.putTextCenter(drawRows + 1, stats, COLOR.hudDim);
+	// Note: "perimeter ÷ diameter" is rendered by the flavor subtitle when outer.
 
 	return { label, vi, vo };
 }
@@ -190,7 +194,7 @@ export function snapshotArchimedes(
 	const state: SceneState = {
 		t,
 		mode: opts?.mode ?? "step",
-		outer: opts?.outer ?? false,
+		outer: opts?.outer ?? true,
 		showCircle: opts?.showCircle ?? true,
 		speed: 1,
 		paused: false,

@@ -74,12 +74,17 @@ export class BrailleCanvas {
 		pts: Array<[number, number]>,
 		color: CellColor = null,
 		dotted = 1,
+		/** Extra vertex dots (graphic-style trap vertices). */
+		vertexDots = false,
 	): void {
 		if (pts.length < 2) return;
 		for (let i = 0; i < pts.length; i++) {
 			const [x0, y0] = pts[i]!;
 			const [x1, y1] = pts[(i + 1) % pts.length]!;
 			this.line(x0, y0, x1, y1, color, dotted);
+		}
+		if (vertexDots) {
+			for (const [x, y] of pts) this.dot(x, y, color);
 		}
 	}
 
