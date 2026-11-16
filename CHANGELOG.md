@@ -1,3 +1,6 @@
+## [1.1.6] - 2026-11-16
+- **archimedes:** keep circle large when starting at triangle (don't shrink to fit outer n=3)
+
 ## [1.1.5] - 2026-11-16
 - **archimedes:** start from triangle — cycle **3 → 20 → 3** (was 5→20→5)
 

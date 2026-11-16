@@ -117,9 +117,14 @@ export function sceneAt(
 }
 
 /**
- * Circle radius sized so the outer trap still fits (~2× the original band scale).
- * Outer circumscribed n-gon reaches r / cos(π/n); leave margin for N_MIN.
+ * Keep the purple circle large (~band-filling). Outer n-gons for small n
+ * (esp. triangle) extend past the circle by 1/cos(π/n); do **not** shrink the
+ * circle to fit N_MIN=3 (that reversed circle vs triangle size). Use a fixed
+ * pentagon-scale margin so the circle stays dominant; extreme outer vertices
+ * may clip the art band briefly at n=3.
  */
+const CIRCLE_FIT_SIDES = 5;
+
 function circleRadius(
 	cv: BrailleCanvas,
 	drawRows: number,
@@ -128,8 +133,7 @@ function circleRadius(
 	const h = drawRows * 4;
 	const half = Math.min(cv.width / 2, h / 2);
 	if (outer) {
-		const sec = 1 / Math.cos(Math.PI / N_MIN);
-		// Slightly tighter than half/sec so the trap fills the band like the graphic.
+		const sec = 1 / Math.cos(Math.PI / CIRCLE_FIT_SIDES);
 		return (half * 0.96) / sec;
 	}
 	return half * 0.98;
