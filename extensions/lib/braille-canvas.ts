@@ -58,20 +58,28 @@ export class BrailleCanvas {
 		x1: number,
 		y1: number,
 		color: CellColor = null,
+		dotted = 1,
 	): void {
 		const steps = Math.trunc(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))) + 1;
-		for (let i = 0; i <= steps; i++) {
+		const stride = Math.max(1, dotted | 0);
+		for (let i = 0; i <= steps; i += stride) {
 			const u = i / steps;
 			this.dot(x0 + (x1 - x0) * u, y0 + (y1 - y0) * u, color);
 		}
+		// Always land the endpoint so polygons close cleanly when strided.
+		if (stride > 1) this.dot(x1, y1, color);
 	}
 
-	polygon(pts: Array<[number, number]>, color: CellColor = null): void {
+	polygon(
+		pts: Array<[number, number]>,
+		color: CellColor = null,
+		dotted = 1,
+	): void {
 		if (pts.length < 2) return;
 		for (let i = 0; i < pts.length; i++) {
 			const [x0, y0] = pts[i]!;
 			const [x1, y1] = pts[(i + 1) % pts.length]!;
-			this.line(x0, y0, x1, y1, color);
+			this.line(x0, y0, x1, y1, color, dotted);
 		}
 	}
 

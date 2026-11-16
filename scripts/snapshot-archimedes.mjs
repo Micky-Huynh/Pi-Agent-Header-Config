@@ -15,8 +15,8 @@ if (!frame.includes("Archimedes")) {
 	console.error("snapshot missing Archimedes HUD");
 	process.exit(1);
 }
-if (!frame.includes("6 sides")) {
-	console.error("snapshot at t=0 should show 6 sides, got:\n", frame);
+if (!frame.includes("5 sides")) {
+	console.error("snapshot at t=0 should show 5 sides (pentagon), got:\n", frame);
 	process.exit(1);
 }
 const artLines = frame.split("\n").slice(0, 12).join("");

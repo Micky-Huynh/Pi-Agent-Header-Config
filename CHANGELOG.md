@@ -1,7 +1,10 @@
+## [1.1.1] - 2026-11-16
+- **archimedes:** blue-dotted approximating polygon; ~2× circle; step **5 → 48 → 5** (loop until typing)
+
 ## [1.1.0] - 2026-11-16
 - Multi-flavor sticky art framework (`extensions/flavors/`)
 - Keep **classic** Π digit stream as a selectable flavor
-- Add **archimedes** — braille circle ≈ polygons morphing 6 → 12 → 24 → 48 (from `polygon_pi.py`)
+- Add **archimedes** — braille circle ≈ polygons (from `polygon_pi.py`)
 - `/pi-header <id>` switches flavor; `/pi-header list` lists them
 - Persist last flavor in `~/.pi/agent/pi-header-art.json`
 - Shared `extensions/lib/braille-canvas.ts` for future scenes

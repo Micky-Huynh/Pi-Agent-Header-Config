@@ -1,6 +1,8 @@
 /**
  * Archimedes' polygons sticky flavor — wraps pure scene + theme paint.
  * Scene math: extensions/lib/archimedes-scene.ts (from Desktop/polygon_pi.py).
+ *
+ * Default: blue-dotted n-gon stepping 5 → 48 → 5 around a ~2× circle until typing.
  */
 
 import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
@@ -10,6 +12,8 @@ import {
 	ART_ROWS,
 	COLOR,
 	HUD_ROWS,
+	N_MAX,
+	N_MIN,
 	paintScene,
 	type SceneState,
 	snapshotArchimedes as snapshotScene,
@@ -18,13 +22,16 @@ import type { ArtFlavor, FlavorTui, FlavorWidget } from "./types.ts";
 
 const FRAME_MS = 67; // ~15 fps
 
+/** Explicit blue for the approximating polygon dots (not a theme token). */
+const POLYGON_BLUE = { kind: "rgb" as const, r: 64, g: 156, b: 255 };
+
 function paintRole(theme: Theme, ch: string, color: CellColor): string {
 	if (!ch || ch === " ") return ch;
 	switch (color) {
 		case COLOR.circle:
 			return theme.fg("muted", ch);
 		case COLOR.inner:
-			return theme.bold(theme.fg("accent", ch));
+			return theme.style(ch, { fg: POLYGON_BLUE, bold: true });
 		case COLOR.outer:
 			return theme.fg("warning", ch);
 		case COLOR.hud:
@@ -43,8 +50,8 @@ function mountArchimedes(
 ): FlavorWidget {
 	const state: SceneState = {
 		t: 0,
-		mode: "double",
-		outer: true,
+		mode: "step",
+		outer: false,
 		showCircle: true,
 		speed: 1,
 		paused: false,
@@ -56,7 +63,7 @@ function mountArchimedes(
 	let unsubscribeInput: (() => void) | undefined;
 	let cachedCols = 0;
 	let cachedLines: string[] = [];
-	let cachedLabel = 6;
+	let cachedLabel = N_MIN;
 
 	const rebuild = (cols: number) => {
 		const cv = new BrailleCanvas(cols, ART_ROWS + HUD_ROWS);
@@ -89,6 +96,7 @@ function mountArchimedes(
 		tui.requestRender();
 	}, FRAME_MS);
 
+	// Typing pauses the loop; widget stays until first submitted message dismisses it.
 	unsubscribeInput = ctx.ui.onTerminalInput(() => {
 		stop();
 		return undefined;
@@ -109,7 +117,7 @@ function mountArchimedes(
 						)
 					: theme.fg(
 							"dim",
-							`  · archimedes · morphing 6→48 · type to pause`,
+							`  · archimedes · ${N_MIN}→${N_MAX}→${N_MIN} · type to pause`,
 						));
 
 			return [...cachedLines, subtitle];
@@ -129,6 +137,6 @@ export const snapshotArchimedes = snapshotScene;
 export const archimedesFlavor: ArtFlavor = {
 	id: "archimedes",
 	label: "Archimedes polygons",
-	description: "Circle ≈ n-gons morphing 6 → 12 → 24 → 48",
+	description: `Circle ≈ blue-dotted n-gons stepping ${N_MIN} → ${N_MAX} → ${N_MIN}`,
 	mount: mountArchimedes,
 };

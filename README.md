@@ -9,7 +9,7 @@ Sticky **TUI artwork** for the [pi](https://github.com/badlogic/pi-mono) coding 
 | Id | Look |
 |----|------|
 | `classic` | Large block **Π**, then unbounded π digits (Rabinowitz–Wagon spigot) scrolling left |
-| `archimedes` | Circle approximated by inscribed/circumscribed polygons morphing **6 → 12 → 24 → 48** (braille canvas) |
+| `archimedes` | Circle ≈ **blue-dotted** n-gon stepping **5 → 48 → 5** (braille; ~2× circle; loops until you type) |
 
 Last chosen flavor is saved to `~/.pi/agent/pi-header-art.json` so it survives `/reload` and new sessions. Default is `classic` until you switch.
 

@@ -1,13 +1,24 @@
 /**
  * Pure Archimedes polygon scene (no pi imports) — shared by flavor + CI snapshot.
+ *
+ * Default look: circle ≈ blue-dotted n-gon stepping 5 → 48 → 5 (until input).
  */
 
 import { BrailleCanvas, type CellColor } from "./braille-canvas.ts";
 
-export const ART_ROWS = 12;
+/** Tall enough that a ~2× circle still fits above the HUD. */
+export const ART_ROWS = 20;
 export const HUD_ROWS = 2;
 export const HOLD_S = 1.4;
 export const MORPH_S = 1.6;
+
+/** Inclusive side-count range for step mode (pentagon → end → back). */
+export const N_MIN = 5;
+export const N_MAX = 48;
+/** Seconds spent on each side count before advancing. */
+export const STEP_HOLD_S = 0.28;
+/** Braille-dot stride along polygon edges (higher = sparser blue dots). */
+export const POLYGON_DOT_STRIDE = 2;
 
 const TOP = -Math.PI / 2;
 
@@ -76,14 +87,16 @@ function regular(n: number, r = 1.0): Array<[number, number]> {
 	return pts;
 }
 
+/**
+ * Triangle wave over [N_MIN, N_MAX]: 5,6,…,48,47,…,5,6,… forever.
+ */
 export function sceneAt(
 	state: SceneState,
 ): { n: number; u: number; label: number } {
 	if (state.mode === "step") {
-		const span = 48 - 6;
-		const stepTime = 0.22;
-		const k = Math.trunc(state.t / stepTime) % (2 * span);
-		const n = 6 + (k <= span ? k : 2 * span - k);
+		const span = N_MAX - N_MIN;
+		const k = Math.trunc(state.t / STEP_HOLD_S) % (2 * span);
+		const n = N_MIN + (k <= span ? k : 2 * span - k);
 		return { n, u: 0, label: n };
 	}
 	const seg = HOLD_S + MORPH_S;
@@ -102,6 +115,22 @@ export function sceneAt(
 	return { n, u, label: u > 0.5 ? 2 * n : n };
 }
 
+/** ~2× the previous outer-constrained radius; fills most of the art band. */
+function circleRadius(
+	cv: BrailleCanvas,
+	drawRows: number,
+	outer: boolean,
+): number {
+	const h = drawRows * 4;
+	const half = Math.min(cv.width / 2, h / 2);
+	if (outer) {
+		// Outer n-gon still needs margin, but keep ~2× old scale.
+		const sec = 1 / Math.cos(Math.PI / N_MIN);
+		return half / (sec * 0.52);
+	}
+	return half * 0.98;
+}
+
 export function paintScene(
 	cv: BrailleCanvas,
 	state: SceneState,
@@ -110,10 +139,7 @@ export function paintScene(
 	const h = drawRows * 4;
 	const cx = cv.width / 2;
 	const cy = h / 2;
-	const sec = 1 / Math.cos(Math.PI / 6);
-	const R = state.outer
-		? Math.min(cv.width / 2, h / 2) / (sec * 1.04)
-		: (Math.min(cv.width, h) / 2) * 0.94;
+	const R = circleRadius(cv, drawRows, state.outer);
 	const toScreen = (pts: Array<[number, number]>): Array<[number, number]> =>
 		pts.map(([x, y]) => [cx + x * R, cy + y * R]);
 
@@ -136,7 +162,8 @@ export function paintScene(
 
 	if (state.showCircle) cv.circle(cx, cy, R, COLOR.circle, 2);
 	if (state.outer) cv.polygon(toScreen(outer), COLOR.outer);
-	cv.polygon(toScreen(inner), COLOR.inner);
+	// Approximating polygon as sparse blue dots (painted blue in the flavor).
+	cv.polygon(toScreen(inner), COLOR.inner, POLYGON_DOT_STRIDE);
 
 	cv.putTextCenter(
 		drawRows,
@@ -162,8 +189,8 @@ export function snapshotArchimedes(
 ): string {
 	const state: SceneState = {
 		t,
-		mode: opts?.mode ?? "double",
-		outer: opts?.outer ?? true,
+		mode: opts?.mode ?? "step",
+		outer: opts?.outer ?? false,
 		showCircle: opts?.showCircle ?? true,
 		speed: 1,
 		paused: false,
